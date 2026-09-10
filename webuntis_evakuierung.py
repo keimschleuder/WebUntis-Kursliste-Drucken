@@ -4,7 +4,6 @@ WebUntis Evakuierungsliste
 
 Installation:
     pip install webuntis tabulate
-
 """
 
 from datetime import datetime, date
@@ -13,14 +12,7 @@ import sys
 import webuntis
 from tabulate import tabulate
 
-# ---------------------------------------------------------------------
-# Zugangsdaten anpassen
-# ---------------------------------------------------------------------
-SERVER = "https://server.webuntis.com"   # z.B. https://ajax.webuntis.com
-SCHOOL = "meine-schule"
-USERNAME = "benutzername"
-PASSWORD = "passwort"
-USERAGENT = "Evakuierungstool"
+from login import SERVER, SCHOOL, USERNAME, PASSWORD, USERAGENT
 
 jetzt = datetime.now()
 heute = date.today()
