@@ -11,6 +11,7 @@ import os
 import sys
 
 import webuntis
+import win32api
 from tabulate import tabulate
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
@@ -18,7 +19,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
-from login import SERVER, SCHOOL, USERNAME, PASSWORD, USERAGENT
+from login import SERVER, SCHOOL, USERNAME, PASSWORD, USERAGENT, DRUCKER
 
 jetzt = datetime.now()
 heute = date.today()
@@ -80,25 +81,38 @@ def hole_aktuelle_kurse():
 
     return zeilen
 
-def main():
-    zeilen = hole_aktuelle_kurse()
-
-    print_out(zeilen)
-    dateiname = pdf_out(zeilen)
-    irl_print(dateiname)
-
-    print("Runtime: {}".format(datetime.now() - jetzt))
-
 def irl_print(dateiname):
-    """Druckt die PDF über den Windows-Standarddrucker."""
+    """Druckt die PDF aus"""
     if not os.path.isfile(dateiname):
         raise FileNotFoundError(f"PDF-Datei nicht gefunden: {dateiname}")
 
     try:
         os.startfile(os.path.abspath(dateiname), "print")
+        # os.startfile(os.path.abspath(dateiname), "printto", DRUCKER)
     except OSError as e:
         raise RuntimeError(
             f"PDF konnte nicht an den Windows-Druckdienst übergeben werden: {dateiname}"
+        ) from e
+
+def irl_print_pywin32(dateiname):
+    """Druckt die PDF auf dem angegebenen Windows-Drucker."""
+    dateipfad = os.path.abspath(dateiname)
+
+    if not os.path.isfile(dateipfad):
+        raise FileNotFoundError(f"PDF-Datei nicht gefunden: {dateipfad}")
+
+    try:
+        win32api.ShellExecute(
+            0,
+            "printto",
+            dateipfad,
+            f'"{DRUCKER}"',
+            ".",
+            0,
+        )
+    except Exception as e:
+        raise RuntimeError(
+            f"PDF konnte nicht auf '{DRUCKER}' gedruckt werden: {dateipfad}"
         ) from e
 
 def pdf_out(zeilen):
@@ -198,6 +212,17 @@ def print_out(zeilen):
     print("-" * 80)
     print(f"{len(zeilen)} aktuell laufende Kurse")
     print("=" * 80)
+
+def main():
+    zeilen = hole_aktuelle_kurse()
+
+    print_out(zeilen)
+    dateiname = pdf_out(zeilen)
+    print(dateiname)
+    # irl_print(dateiname)
+    # irl_print_pywin32(dateiname)
+
+    print("Runtime: {}".format(datetime.now() - jetzt))
 
 if __name__ == "__main__":
     main()
