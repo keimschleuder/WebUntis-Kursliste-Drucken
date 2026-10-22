@@ -7,6 +7,7 @@ Installation:
 """
 
 from datetime import datetime, date
+import os
 import sys
 
 import webuntis
@@ -83,9 +84,22 @@ def main():
     zeilen = hole_aktuelle_kurse()
 
     print_out(zeilen)
-    pdf_out(zeilen)
+    dateiname = pdf_out(zeilen)
+    irl_print(dateiname)
 
     print("Runtime: {}".format(datetime.now() - jetzt))
+
+def irl_print(dateiname):
+    """Druckt die PDF über den Windows-Standarddrucker."""
+    if not os.path.isfile(dateiname):
+        raise FileNotFoundError(f"PDF-Datei nicht gefunden: {dateiname}")
+
+    try:
+        os.startfile(os.path.abspath(dateiname), "print")
+    except OSError as e:
+        raise RuntimeError(
+            f"PDF konnte nicht an den Windows-Druckdienst übergeben werden: {dateiname}"
+        ) from e
 
 def pdf_out(zeilen):
     """Erzeugt eine druckfreundliche PDF-Datei und gibt deren Pfad zurück."""
