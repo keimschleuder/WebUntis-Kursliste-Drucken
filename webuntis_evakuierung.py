@@ -65,7 +65,7 @@ def hole_aktuelle_kurse():
                 try:
                     lehrer = ", ".join(l.name for l in periode.teachers) or "-"
                 except:
-                    lehrer = ""
+                    lehrer = " - "
                 klassen_namen = ", ".join(k.name for k in periode.klassen) or "-"
                 faecher = ", ".join(f.name for f in periode.subjects) or "-"
                 raeume = ", ".join(r.name for r in periode.rooms) or "-"
@@ -148,7 +148,7 @@ def pdf_out(zeilen):
             findet_statt = True
 
         tabelle.append([
-            "[ ]",
+            "",
             lehrer,
             raeume,
             zeit,
@@ -205,8 +205,20 @@ def print_out(zeilen):
     print("=" * 80)
     print()
 
-    header = ["Lehrer", "Klasse(n)", "Fach", "Raum", "Zeit"]
-    print(tabulate(zeilen, headers=header, tablefmt="grid"))
+    header = ["Draussen", "Lehrer", "Raum", "Zeit", "Status", "Klasse(n)", "Fach"]
+    druckzeilen = [
+        [
+            "",
+            lehrer,
+            raeume,
+            zeit,
+            "NORMAL" if findet_statt else "ENTFALL",
+            klassen,
+            faecher,
+        ]
+        for lehrer, raeume, zeit, findet_statt, klassen, faecher in zeilen
+    ]
+    print(tabulate(druckzeilen, headers=header, tablefmt="grid"))
 
     print()
     print("-" * 80)
