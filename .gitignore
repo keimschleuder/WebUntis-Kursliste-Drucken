@@ -1,2 +1,4 @@
 login.py
 *.pyc
+.vscode/*
+*.pdf
