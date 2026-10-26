@@ -5,3 +5,7 @@ Get-Printer | Select-Object -ExpandProperty Name # Druckerliste ausgeben
 # Generate login.py
 # Fill with data
 # login.py verstecken
+# Hauptdatei ins richtige Verzeichnis bewegen
+# Geklontes Repo löschen
+# Hauptdatei ausführen
+# __pycache__/ verstecken
