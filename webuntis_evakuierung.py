@@ -3,7 +3,7 @@ WebUntis Evakuierungsliste
 ===========================
 
 Installation:
-    pip install webuntis tabulate reportlab
+    pip install webuntis tabulate reportlab pywin32
 """
 
 from datetime import datetime, date
@@ -80,19 +80,6 @@ def hole_aktuelle_kurse():
     zeilen.sort(key=lambda z: z[0])
 
     return zeilen
-
-def irl_print(dateiname):
-    """Druckt die PDF aus"""
-    if not os.path.isfile(dateiname):
-        raise FileNotFoundError(f"PDF-Datei nicht gefunden: {dateiname}")
-
-    try:
-        os.startfile(os.path.abspath(dateiname), "print")
-        # os.startfile(os.path.abspath(dateiname), "printto", DRUCKER)
-    except OSError as e:
-        raise RuntimeError(
-            f"PDF konnte nicht an den Windows-Druckdienst übergeben werden: {dateiname}"
-        ) from e
 
 def irl_print_pywin32(dateiname):
     """Druckt die PDF auf dem angegebenen Windows-Drucker."""
@@ -231,8 +218,7 @@ def main():
     print_out(zeilen)
     dateiname = pdf_out(zeilen)
     print(dateiname)
-    # irl_print(dateiname)
-    # irl_print_pywin32(dateiname)
+    irl_print_pywin32(dateiname)
 
     print("Runtime: {}".format(datetime.now() - jetzt))
 
