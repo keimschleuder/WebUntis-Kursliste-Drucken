@@ -25,6 +25,14 @@ jetzt = datetime.now()
 heute = date.today()
 sicher = True
 
+def formatiere_klassen(klassen):
+    """Zeigt höchstens drei Klassennamen an und kürzt längere Listen."""
+    klassennamen = [klasse.name for klasse in klassen]
+    if len(klassennamen) > 3:
+        return ", ".join(klassennamen[:3]) + ", ..."
+    return ", ".join(klassennamen) or "-"
+
+
 def hole_aktuelle_kurse():
     """Fragt bei WebUntis alle aktuell laufenden, nicht entfallenen Kurse ab."""
     global sicher
@@ -62,11 +70,8 @@ def hole_aktuelle_kurse():
 
                 gesehene_ids.add(periode.id)
 
-                try:
-                    lehrer = ", ".join(l.name for l in periode.teachers) or "-"
-                except:
-                    lehrer = " - "
-                klassen_namen = ", ".join(k.name for k in periode.klassen) or "-"
+                lehrer = ", ".join(l.title for l in periode.teachers) or "-"
+                klassen_namen = formatiere_klassen(periode.klassen)
                 faecher = ", ".join(f.name for f in periode.subjects) or "-"
                 raeume = ", ".join(r.name for r in periode.rooms) or "-"
                 zeit = f"{periode.start.strftime('%H:%M')}-{periode.end.strftime('%H:%M')}"
@@ -80,6 +85,9 @@ def hole_aktuelle_kurse():
     zeilen.sort(key=lambda z: z[0])
 
     return zeilen
+
+def send_mail(dateiname):
+    '''Sendet die Datei per Mail an vordefinierte Nutzer'''
 
 def irl_print_pywin32(dateiname):
     """Druckt die PDF auf dem angegebenen Windows-Drucker."""
@@ -127,6 +135,7 @@ def pdf_out(zeilen):
 
     kopf = ["Draussen", "Lehrer", "Raum", "Zeit", "Status", "Klasse(n)", "Fach"]
     tabelle = [kopf]
+    entfall_zeilen = []
     for zeile in zeilen:
         if len(zeile) == 6:
             lehrer, raeume, zeit, findet_statt, klassen, faecher = zeile
@@ -143,6 +152,8 @@ def pdf_out(zeilen):
             klassen,
             faecher,
         ])
+        if not findet_statt:
+            entfall_zeilen.append(len(tabelle) - 1)
 
     if len(tabelle) == 1:
         tabelle.append(["", "Keine aktuell laufenden Kurse gefunden."] + [""] * 5)
@@ -160,13 +171,15 @@ def pdf_out(zeilen):
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
         ("ALIGN", (0, 0), (0, -1), "CENTER"),
         ("ALIGN", (3, 1), (4, -1), "CENTER"),
+        ("TEXTCOLOR", (4, 1), (4, -1), colors.black),
         ("FONTSIZE", (0, 0), (-1, -1), 9),
         ("BOTTOMPADDING", (0, 0), (-1, 0), 6),
         ("TOPPADDING", (0, 0), (-1, 0), 6),
     ]))
-    raster.setStyle(TableStyle([
-        ("TEXTCOLOR", (4, 1), (4, -1), colors.red),
-    ]))
+    for zeilen_index in entfall_zeilen:
+        raster.setStyle(TableStyle([
+            ("TEXTCOLOR", (4, zeilen_index), (4, zeilen_index), colors.red),
+        ]))
     inhalt.extend([raster, Spacer(1, 6 * mm)])
     inhalt.append(Paragraph(f"{len(zeilen)} aktuell laufende Kurse", styles["Normal"]))
 
@@ -226,7 +239,5 @@ if __name__ == "__main__":
     main()
 
 # TODO: 
-# Zeilenbreite Fixen
-# Farben Entfall/Normal
-# Lehrer-Kürzel --> Doku
+# Lehrer-Kürzel --> Berechtigung Stammdaten: Lehrkraft: Lesen
 # Per Mail verschicken
