@@ -150,7 +150,7 @@ def pdf_out(zeilen):
     raster = Table(
         tabelle,
         repeatRows=1,
-        colWidths=[18 * mm, 32 * mm, 25 * mm, 22 * mm, 25 * mm, 32 * mm, 32 * mm],
+        colWidths=[18 * mm, 25 * mm, 25 * mm, 22 * mm, 25 * mm, 39 * mm, 32 * mm],
     )
     raster.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#d9e2f3")),
@@ -224,3 +224,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# TODO: 
+# Zeilenbreite Fixen
+# Farben Entfall/Normal
+# Lehrer-Kürzel --> Doku
+# Per Mail verschicken
