@@ -17,12 +17,19 @@ Get-Printer | Select-Object -ExpandProperty Name
 Layout der login.py:
 
 ```python
+# WebUntis Login
 SERVER = "https://beste-schule.webuntis.com"
 SCHOOL = "beste-schule"
 USERNAME = "USERNAME"
 PASSWORD = "PASSWORD"
 USERAGENT = "Evakuierungstool"
 
+# Drucker
 DRUCKER = "Hier Druckername einfuegen"
+
+# Email
+EMPFAENGER = ["empfaenger@mail.com"]
+ABSENDER = "kermit@frosch.de"
+PASSWORT = "meinsupergeheimespasswort"
 ```
 Die Werte müssen hierbei noch angepasst werden. Die Datei muss im selben Verzeichnis liegen, wie die Hauptdatei. Dabei kann login.py auch "versteckt" sein. In diesem Verzeichnis werden auch die Ausgabedateien gespeichert.
