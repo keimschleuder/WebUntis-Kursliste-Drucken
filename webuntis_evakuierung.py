@@ -32,7 +32,6 @@ def formatiere_klassen(klassen):
         return ", ".join(klassennamen[:3]) + ", ..."
     return ", ".join(klassennamen) or "-"
 
-
 def hole_aktuelle_kurse():
     """Fragt bei WebUntis alle aktuell laufenden, nicht entfallenen Kurse ab."""
     global sicher
@@ -88,6 +87,15 @@ def hole_aktuelle_kurse():
 
 def send_mail(dateiname):
     '''Sendet die Datei per Mail an vordefinierte Nutzer'''
+    dateipfad = os.path.abspath(dateiname)
+
+    if not os.path.isfile(dateipfad):
+        raise FileNotFoundError(f"PDF-Datei nicht gefunden: {dateipfad}")
+
+    # TODO: 
+    # Mailserver
+    # Mailadresse
+    # Empfaenger
 
 def irl_print_pywin32(dateiname):
     """Druckt die PDF auf dem angegebenen Windows-Drucker."""
